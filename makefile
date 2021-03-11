@@ -9,3 +9,6 @@ test.o:
 #####################################
 clean:
 	rm *.o
+clean_all:
+	rm *.o
+	rm Grupo2_CMDParser

@@ -1,3 +1,10 @@
+/*
+cmdparser.c - Parser de command line para paso de argumentos, detección de errores de sintaxis y comprobación de comandos por callback
+Creado por el grupo 2 (Sofía Castro Murphy, Juan Ignacio Causse, Mariano Agustín Dolhare)
+Instituto Tecnológico de Buenos Aires
+Estructuras de Datos y Algoritmos 1C2021
+*/
+
 #include "cmdparser.h"
 
 //Custom data type
@@ -11,18 +18,10 @@ typedef unsigned short boolean;
 #define ERROR_ARG_IS_NOT_VALID -3
 
 int parseCmdLine(int argc, char *argv[], pCallback p, void *userData){
-    unsigned short index = 1, readArgs = 0;
+    unsigned short index = 1, readArgs = 0, optionsCounter = 0;
     short error = 0;
     boolean exit = ((argc > 1) ? FALSE : TRUE), enoughArgsForOption = TRUE, inputIsValid;
     char *arg1, *arg2;
-
-    #ifdef DEBUG
-        printf ("\nDEBUG MSG: Started cmdline argument print\n");
-        for (index = 0; index < argc; index++){
-            printf ("%s ", argv[index]);
-        }
-        printf ("\nDEBUG MSG: Finished cmdline argument print\n");
-    #endif
 
     while (!exit){
         //Check for non-read args
@@ -49,6 +48,7 @@ int parseCmdLine(int argc, char *argv[], pCallback p, void *userData){
             }
             arg2 = argv[index++];
             readArgs++;
+            optionsCounter++;   //This is needed to count key + value (option) as 1 argument
             inputIsValid = (boolean) p(arg1, arg2, userData);   //userData is unmodified
         }
         else{                                   //Parameters (not starting in '-')
@@ -61,5 +61,5 @@ int parseCmdLine(int argc, char *argv[], pCallback p, void *userData){
         }
     }
 
-    return ((error == 0) ? readArgs : error);
+    return ((error == 0) ? (readArgs - optionsCounter) : error);
 }
